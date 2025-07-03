@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Oliver's Carb Calculator</title>
+  <style>
+    body {
+      font-family: "Fredoka", sans-serif;
+      background-color: #f4fbf6;
+      padding: 2rem;
+      color: #333;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #345c42;
+      font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+    }
+
+    #formContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    }
+
+    input {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #88a27f;
+      color: white;
+      cursor: pointer;
+    }
+
+    .snack-card {
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .snack-name {
+      font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+      font-size: 1.3rem;
+      color: #345c42;
+      margin-bottom: 0.5rem;
+    }
+
+    .snack-img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .snack-actions {
+      margin-top: 0.6rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .snack-actions button {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .snack-actions button:hover {
+      transform: scale(1.2);
+    }
+
+    .carb-info {
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h1>Oliver's Carb Calculator</h1>
+  <div id="formContainer">
+    <input type="text" id="nameInput" placeholder="Name" />
+    <input type="number" id="gramsInput" placeholder="Serving Size in grams" />
+    <input type="number" id="carbsInput" placeholder="Serving Size in carbs" />
+    <button onclick="addSnack()">Add Snack</button>
+  </div>
+
+  <div id="snackList"></div>
+
+  
+
+  <script>
+    let snacks = JSON.parse(localStorage.getItem("snacks") || "[]");
+    let currentImageIndex = null;
+
+    function saveSnacks() {
+      localStorage.setItem("snacks", JSON.stringify(snacks));
+      
+function handleImageUpload(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    snacks[index].image = e.target.result;
+    saveSnacks();
+  };
+  reader.readAsDataURL(file);
+}
+
+renderSnacks();
+
+    }
+
+    function addSnack() {
+  const btn = document.querySelector("#formContainer button");
+      const name = document.getElementById("nameInput").value.trim();
+      const grams = parseFloat(document.getElementById("gramsInput").value);
+      const carbs = parseFloat(document.getElementById("carbsInput").value);
+      if (!name || isNaN(grams) || isNaN(carbs)) return;
+
+      if (editIndex !== null) {
+    const existing = snacks[editIndex];
+    snacks[editIndex] = { name, grams, carbs, image: existing.image };
+    editIndex = null;
+    btn.textContent = "Add Snack";
+  } else {
+    snacks.push({ name, grams, carbs, image: "" });
+  }
+      document.getElementById("nameInput").value = "";
+      document.getElementById("gramsInput").value = "";
+      document.getElementById("carbsInput").value = "";
+      saveSnacks();
+    }
+
+    function renderSnacks() {
+      const list = document.getElementById("snackList");
+      list.innerHTML = "";
+      snacks.forEach((snack, i) => {
+        const five = snack.grams * 5 / snack.carbs;
+        const ten = snack.grams * 10 / snack.carbs;
+
+        const card = document.createElement("div");
+        card.className = "snack-card";
+        card.innerHTML = `
+          <div class="snack-name">${snack.name}</div>
+          <img src="${snack.image || "https://via.placeholder.com/160"}" class="snack-img" />
+          <div class="snack-actions">
+  <button onclick="editSnack(${i})">✏️</button>
+  <button onclick="document.getElementById('upload${i}').click()">🖼️</button>
+  <button onclick="deleteSnack(${i})">🗑️</button>
+</div>
+<input type="file" id="upload${i}" accept="image/*" style="display:none" onchange="handleImageUpload(event, ${i})" />
+          <div class="carb-info">
+            <strong>5 carbs:</strong> ${five.toFixed(1)}g &nbsp;&nbsp;
+            <strong>10 carbs:</strong> ${ten.toFixed(1)}g
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function deleteSnack(i) {
+      snacks.splice(i, 1);
+      saveSnacks();
+    }
+
+    
+let editIndex = null;
+
+function editSnack(i) {
+  const snack = snacks[i];
+  document.getElementById("nameInput").value = snack.name;
+  document.getElementById("gramsInput").value = snack.grams;
+  document.getElementById("carbsInput").value = snack.carbs;
+  editIndex = i;
+  document.querySelector("#formContainer button").textContent = "Update Snack";
+}
+
+
+    
+
+    
+function handleImageUpload(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    snacks[index].image = e.target.result;
+    saveSnacks();
+  };
+  reader.readAsDataURL(file);
+}
+
+renderSnacks();
+
+  </script>
+</body>
+</html>
