@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Oliver's Carb Calculator</title>
+<style>
+  body {
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #f4fbf6;
+    color: #333;
+    padding: 1rem;
+  }
+
+  .snack-container {
+    max-width: 600px;
+    margin: 1rem auto;
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+
+  .snack-name {
+    font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+    font-size: 1.3rem;
+    color: #345c42;
+    margin-bottom: 0.5rem;
+  }
+
+  .snack-img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .snack-actions {
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .snack-actions button {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+
+  .snack-actions button:hover {
+    transform: scale(1.2);
+  }
+</style>
+</head>
+<body>
+  <div class="snack-container">
+    <div class="snack-name">Crispy Apple Slices</div>
+    <img src="https://via.placeholder.com/160" alt="Snack Image" class="snack-img">
+    <div class="snack-actions">
+      <button title="Edit">✏️</button>
+      <button title="Change Image">🖼️</button>
+      <button title="Delete">🗑️</button>
+    </div>
+  </div>
+</body>
+</html>
